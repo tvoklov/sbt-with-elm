@@ -7,6 +7,7 @@ object ElmCompile extends AutoPlugin {
   object autoImport {
     val elmMainFile = settingKey[String]("Elm entry point location")
     val elmSrcDirectory = settingKey[File]("Elm source files location")
+    val elmOutputFile = settingKey[String]("Elm output file name")
   }
 
   import autoImport._
@@ -14,7 +15,12 @@ object ElmCompile extends AutoPlugin {
   val compileElm = taskKey[Seq[File]]("Compiles elm code")
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
+    // defaults
+    elmMainFile := "Main.elm",
     elmSrcDirectory := (Compile / sourceDirectory).value / "elm",
+    elmOutputFile := "/elm/elm.js",
+
+    // elm compilation
     compileElm := {
       import scala.sys.process._
 
@@ -24,7 +30,7 @@ object ElmCompile extends AutoPlugin {
         else Seq("bash", "-c")
 
       val elmIn = elmSrcDirectory.value / elmMainFile.value
-      val elmOut = (Compile / resourceManaged).value / "/elm/elm.js"
+      val elmOut = (Compile / resourceManaged).value / elmOutputFile.value
 
       if (elmIn.exists()) {
         val make: Seq[String] =
@@ -41,6 +47,8 @@ object ElmCompile extends AutoPlugin {
         Seq.empty
       }
     },
+
+    // integration into the compile pipeline
     compileElm / watchTriggers += elmSrcDirectory.value.toGlob,
     Compile / resourceGenerators += compileElm,
     Compile / packageBin / mappings += {
