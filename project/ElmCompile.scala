@@ -1,10 +1,12 @@
 import sbt.Keys._
+import sbt.nio.Keys.watchTriggers
 import sbt.{Compile, Def, _}
 
 object ElmCompile extends AutoPlugin {
 
   object autoImport {
     val elmMainFile = settingKey[String]("Elm entry point location")
+    val elmSrcDirectory = settingKey[File]("Elm source files location")
   }
 
   import autoImport._
@@ -12,6 +14,7 @@ object ElmCompile extends AutoPlugin {
   val compileElm = taskKey[Seq[File]]("Compiles elm code")
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
+    elmSrcDirectory := (Compile / sourceDirectory).value / "elm",
     compileElm := {
       import scala.sys.process._
 
@@ -20,8 +23,7 @@ object ElmCompile extends AutoPlugin {
         if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c")
         else Seq("bash", "-c")
 
-      val elmIn =
-        (Compile / sourceDirectory).value / "elm" / (ThisProject / elmMainFile).value
+      val elmIn = elmSrcDirectory.value / elmMainFile.value
       val elmOut = (Compile / resourceManaged).value / "/elm/elm.js"
 
       if (elmIn.exists()) {
@@ -39,6 +41,7 @@ object ElmCompile extends AutoPlugin {
         Seq.empty
       }
     },
+    compileElm / watchTriggers += elmSrcDirectory.value.toGlob,
     Compile / resourceGenerators += compileElm,
     Compile / packageBin / mappings += {
       (Compile / resourceManaged).value / "elm" -> "elm"
