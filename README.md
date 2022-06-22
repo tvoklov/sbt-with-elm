@@ -27,5 +27,5 @@ all in a clean, non-hardcoded, no ".gitignore the compiled junk" way
 ### OR
 
 - fork this repo
-- tweak some stuff (see: [`what are the defaults`](#what-are-the-defaults))
+- tweak some stuff (see: [what are the defaults](#what-are-the-defaults))
 - write your code
