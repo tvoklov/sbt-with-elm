@@ -20,14 +20,12 @@ to package both front and backend code into one jar
 
 ## what you can use this for
 
-read through [`the plugin file`](project/ElmCompile.scala) if you want to learn one way
+read through [the plugin file](project/ElmCompile.scala) if you want to learn one way
 to make sbt compile your elm/ts/whatever code and put it right into your jar.
 all in a clean, non-hardcoded, no ".gitignore the compiled junk" way
 
 ### OR
 
 - fork this repo
-- tweak some stuff (see: [`what are the defaults`](#what-are-the-defaults))
+- tweak some stuff (see: [what are the defaults](#what-are-the-defaults))
 - write your code
-
-all without a single care for what [magic](project/ElmCompile.scala) is used to make this work
