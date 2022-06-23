@@ -8,11 +8,11 @@ object ElmCompile extends AutoPlugin {
     val elmMainFile = settingKey[String]("Elm entry point location")
     val elmSrcDirectory = settingKey[File]("Elm source files location")
     val elmOutputFile = settingKey[String]("Elm output file name")
+
+    val compileElm = taskKey[Seq[File]]("Compiles elm code")
   }
 
   import autoImport._
-
-  val compileElm = taskKey[Seq[File]]("Compiles elm code")
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
     // defaults
