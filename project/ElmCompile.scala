@@ -1,13 +1,13 @@
 import sbt.Keys._
 import sbt.nio.Keys.watchTriggers
-import sbt.{Compile, Def, _}
+import sbt.{ Compile, Def, _ }
 
 object ElmCompile extends AutoPlugin {
 
   object autoImport {
-    val elmMainFile = settingKey[String]("Elm entry point location")
+    val elmMainFile     = settingKey[String]("Elm entry point location")
     val elmSrcDirectory = settingKey[File]("Elm source files location")
-    val elmOutputFile = settingKey[String]("Elm output file name")
+    val elmOutputFile   = settingKey[String]("Elm output file name")
 
     val compileElm = taskKey[Seq[File]]("Compiles elm code")
   }
@@ -29,7 +29,7 @@ object ElmCompile extends AutoPlugin {
         if (sys.props("os.name").contains("Windows")) Seq("cmd", "/c")
         else Seq("bash", "-c")
 
-      val elmIn = elmSrcDirectory.value / elmMainFile.value
+      val elmIn  = elmSrcDirectory.value / elmMainFile.value
       val elmOut = (Compile / resourceManaged).value / elmOutputFile.value
 
       if (elmIn.exists()) {
@@ -39,9 +39,8 @@ object ElmCompile extends AutoPlugin {
         if ((make !) == 0) {
           s.log.success("fronted build done")
           Seq(elmOut)
-        } else {
+        } else
           throw new IllegalStateException("frontend build failed")
-        }
       } else {
         s.log.info("no elm files defined, skipping frontend compilation")
         Seq.empty
@@ -49,7 +48,7 @@ object ElmCompile extends AutoPlugin {
     },
 
     // integration into the compile pipeline
-    compileElm / watchTriggers += elmSrcDirectory.value.toGlob,
+    compileElm / watchTriggers += elmSrcDirectory.value.toGlob / "*",
     Compile / resourceGenerators += compileElm,
     Compile / packageBin / mappings += {
       (Compile / resourceManaged).value / "elm" -> "elm"
